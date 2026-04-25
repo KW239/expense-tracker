@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Expenses">
+<meta name="apple-mobile-web-app-title" content="Expense Tracker">
 <title>Expense Tracker</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -231,6 +231,28 @@ body {
 /* ── Delete ── */
 .swipe-hint { font-size: 11px; color: var(--text-light); text-align: center; margin-top: 8px; }
 
+/* ── Login screen ── */
+.login-screen {
+  position: fixed; inset: 0; background: var(--bg); z-index: 500;
+  display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+.login-card {
+  background: var(--card); border-radius: 20px; padding: 40px 28px;
+  width: 90%; max-width: 360px; text-align: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+.login-card .app-icon { font-size: 48px; margin-bottom: 16px; }
+.login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.login-card p { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
+.login-card input {
+  width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 16px; color: var(--text); background: var(--bg); margin-bottom: 16px;
+  text-align: center;
+}
+.login-card .btn-submit { margin-top: 0; }
+.user-greeting { font-size: 13px; color: var(--text-light); font-weight: 400; }
+
 /* ── Animations ── */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
@@ -238,8 +260,22 @@ body {
 </head>
 <body>
 
-<div class="header">
-  <h1>Expenses</h1>
+<!-- Login screen -->
+<div class="login-screen" id="loginScreen" style="display:none;">
+  <div class="login-card">
+    <div class="app-icon">💰</div>
+    <h2>Expense Tracker</h2>
+    <p>Track your business and personal expenses in one place.</p>
+    <input type="text" id="loginName" placeholder="Your name" autocomplete="name">
+    <button class="btn-submit" onclick="loginUser()">Get Started</button>
+  </div>
+</div>
+
+<div class="header" id="appHeader" style="display:none;">
+  <div style="display:flex;justify-content:space-between;align-items:baseline;">
+    <h1>Expense Tracker</h1>
+    <span class="user-greeting" id="userGreeting"></span>
+  </div>
   <div class="tabs">
     <button class="tab active" data-tab="business" onclick="switchTab('business')">Business</button>
     <button class="tab" data-tab="personal" onclick="switchTab('personal')">Personal</button>
@@ -291,6 +327,8 @@ body {
         <button class="type-btn" data-type="health" onclick="selectType(this)"><span class="icon">💊</span>Health</button>
         <button class="type-btn" data-type="sports" onclick="selectType(this)"><span class="icon">🏃</span>Sports</button>
         <button class="type-btn" data-type="entertainment" onclick="selectType(this)"><span class="icon">🎭</span>Entertainment</button>
+        <button class="type-btn" data-type="presents" onclick="selectType(this)"><span class="icon">🎁</span>Presents</button>
+        <button class="type-btn" data-type="other" onclick="selectType(this)"><span class="icon">📄</span>Other</button>
       </div>
     </div>
     <div class="form-group">
@@ -360,6 +398,8 @@ body {
         <button class="type-btn" data-type="health" onclick="selectEditType(this)"><span class="icon">💊</span>Health</button>
         <button class="type-btn" data-type="sports" onclick="selectEditType(this)"><span class="icon">🏃</span>Sports</button>
         <button class="type-btn" data-type="entertainment" onclick="selectEditType(this)"><span class="icon">🎭</span>Entertainment</button>
+        <button class="type-btn" data-type="presents" onclick="selectEditType(this)"><span class="icon">🎁</span>Presents</button>
+        <button class="type-btn" data-type="other" onclick="selectEditType(this)"><span class="icon">📄</span>Other</button>
       </div>
     </div>
     <div class="form-group">
@@ -394,7 +434,9 @@ const TYPES = {
   taxes: { icon: '🏛️', label: 'Taxes' },
   health: { icon: '💊', label: 'Health' },
   sports: { icon: '🏃', label: 'Sports' },
-  entertainment: { icon: '🎭', label: 'Entertainment' }
+  entertainment: { icon: '🎭', label: 'Entertainment' },
+  presents: { icon: '🎁', label: 'Presents' },
+  other: { icon: '📄', label: 'Other' }
 };
 
 const CURRENCY_SYMBOLS = { EUR: '€', USD: '$', SEK: 'kr ' };
@@ -584,7 +626,9 @@ function renderGlossary(el) {
         { icon: '🏛️', label: 'Taxes', desc: 'Tax payments, VAT charges, duties, or other government fees.' },
         { icon: '💊', label: 'Health', desc: 'Medical bills, prescriptions, health insurance, dental, or therapy costs.' },
         { icon: '🏃', label: 'Sports', desc: 'Gym memberships, sports equipment, event registrations, or fitness subscriptions.' },
-        { icon: '🎭', label: 'Entertainment', desc: 'Events, concerts, subscriptions, hobbies, or leisure activities.' }
+        { icon: '🎭', label: 'Entertainment', desc: 'Events, concerts, subscriptions, hobbies, or leisure activities.' },
+        { icon: '🎁', label: 'Presents', desc: 'Gifts, birthday presents, holiday gifts, or charitable donations.' },
+        { icon: '📄', label: 'Other', desc: 'Any expense that does not fit the categories above.' }
       ]
     },
     {
@@ -903,8 +947,29 @@ document.getElementById('addModal').addEventListener('click', function(e) { if (
 document.getElementById('expensedModal').addEventListener('click', function(e) { if (e.target === this) closeExpensedModal(); });
 document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
 
+// ── Login ──
+function checkLogin() {
+  const user = localStorage.getItem('expense_user');
+  if (user) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appHeader').style.display = '';
+    document.getElementById('userGreeting').textContent = user;
+    render();
+  } else {
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('appHeader').style.display = 'none';
+  }
+}
+
+function loginUser() {
+  const name = document.getElementById('loginName').value.trim();
+  if (!name) { alert('Please enter your name.'); return; }
+  localStorage.setItem('expense_user', name);
+  checkLogin();
+}
+
 // ── Init ──
-render();
+checkLogin();
 </script>
 </body>
 </html>
