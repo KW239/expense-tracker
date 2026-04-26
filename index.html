@@ -6,6 +6,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Expense Tracker">
+<link rel="apple-touch-icon" href="icon-180.png">
 <title>Expense Tracker</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -218,8 +219,8 @@ body {
   display: flex; flex-direction: column; align-items: center; gap: 2px;
   font-size: 10px; color: var(--text-light); background: none; border: none; cursor: pointer;
 }
-.nav-item.active { color: var(--accent); }
-.nav-item .nav-icon { font-size: 22px; }
+.nav-item.active { color: #9929bd; }
+.nav-item .nav-icon { font-size: 22px; display: flex; align-items: center; justify-content: center; height: 24px; }
 
 /* ── Empty state ── */
 .empty-state {
@@ -231,27 +232,30 @@ body {
 /* ── Delete ── */
 .swipe-hint { font-size: 11px; color: var(--text-light); text-align: center; margin-top: 8px; }
 
-/* ── Login screen ── */
-.login-screen {
-  position: fixed; inset: 0; background: var(--bg); z-index: 500;
+/* ── Profile tab ── */
+.profile-card {
+  background: var(--card); border-radius: var(--radius); padding: 28px 20px;
+  box-shadow: var(--shadow); text-align: center; margin-bottom: 16px;
+}
+.profile-avatar {
+  width: 72px; height: 72px; border-radius: 50%; background: #F0F4FF;
   display: flex; align-items: center; justify-content: center;
-  animation: fadeIn 0.3s ease;
+  font-size: 28px; font-weight: 700; color: var(--accent);
+  margin: 0 auto 12px;
 }
-.login-card {
-  background: var(--card); border-radius: 20px; padding: 40px 28px;
-  width: 90%; max-width: 360px; text-align: center;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+.profile-name { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+.profile-label { font-size: 13px; color: var(--text-light); }
+.btn-logout {
+  width: 100%; padding: 15px; background: none; color: var(--red);
+  border: 1.5px solid var(--red); border-radius: 12px; font-size: 16px; font-weight: 600;
+  cursor: pointer; margin-top: 16px;
 }
-.login-card .app-icon { font-size: 48px; margin-bottom: 16px; }
-.login-card h2 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
-.login-card p { font-size: 14px; color: var(--text-light); margin-bottom: 24px; }
-.login-card input {
-  width: 100%; padding: 14px 16px; border: 1.5px solid var(--border); border-radius: 12px;
-  font-size: 16px; color: var(--text); background: var(--bg); margin-bottom: 16px;
-  text-align: center;
-}
-.login-card .btn-submit { margin-top: 0; }
-.user-greeting { font-size: 13px; color: var(--text-light); font-weight: 400; }
+.login-form-inline { max-width: 400px; margin: 0 auto; }
+.login-form-inline .app-icon { font-size: 48px; text-align: center; margin-bottom: 16px; }
+.login-form-inline h3 { font-size: 20px; font-weight: 700; text-align: center; margin-bottom: 6px; }
+.login-form-inline p { font-size: 14px; color: var(--text-light); text-align: center; margin-bottom: 24px; }
+.pw-hint { font-size: 11px; color: var(--text-light); margin-top: -10px; margin-bottom: 16px; }
+.pw-error { font-size: 12px; color: var(--red); margin-top: -10px; margin-bottom: 12px; display: none; }
 
 /* ── Animations ── */
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -260,21 +264,23 @@ body {
 </head>
 <body>
 
-<!-- Login screen -->
-<div class="login-screen" id="loginScreen" style="display:none;">
-  <div class="login-card">
-    <div class="app-icon">💰</div>
-    <h2>Expense Tracker</h2>
-    <p>Track your business and personal expenses in one place.</p>
-    <input type="text" id="loginName" placeholder="Your name" autocomplete="name">
-    <button class="btn-submit" onclick="loginUser()">Get Started</button>
-  </div>
-</div>
-
-<div class="header" id="appHeader" style="display:none;">
-  <div style="display:flex;justify-content:space-between;align-items:baseline;">
+<div class="header">
+  <div style="display:flex;align-items:center;gap:10px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="34" height="34" viewBox="0 0 180 180" style="flex-shrink:0;">
+      <rect width="180" height="180" rx="36" fill="#F5F5F7"/>
+      <circle cx="99" cy="62" r="19" fill="none" stroke="#9929bd" stroke-width="3"/>
+      <line x1="99" y1="39" x2="99" y2="32" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="119" y1="43" x2="124" y2="38" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="79" y1="43" x2="74" y2="38" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="122" y1="62" x2="128" y2="62" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="76" y1="62" x2="70" y2="62" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="119" y1="81" x2="124" y2="86" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <line x1="79" y1="81" x2="74" y2="86" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round"/>
+      <path d="M30 105 Q60 88 90 105 Q120 122 150 105" fill="none" stroke="#9929bd" stroke-width="3" stroke-linecap="round"/>
+      <path d="M35 127 Q65 110 95 127 Q125 144 155 127" fill="none" stroke="#9929bd" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>
+      <path d="M40 147 Q70 133 100 147 Q130 161 155 147" fill="none" stroke="#9929bd" stroke-width="2" stroke-linecap="round" opacity="0.35"/>
+    </svg>
     <h1>Expense Tracker</h1>
-    <span class="user-greeting" id="userGreeting"></span>
   </div>
   <div class="tabs">
     <button class="tab active" data-tab="business" onclick="switchTab('business')">Business</button>
@@ -416,13 +422,16 @@ body {
 
 <div class="bottom-nav">
   <button class="nav-item active" onclick="switchView('expenses')">
-    <span class="nav-icon">📋</span> Expenses
+    <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="12" x="2" y="6" rx="2"/><circle cx="12" cy="12" r="2"/><path d="M6 12h.01M18 12h.01"/><path d="m16 19 3 3 3-3"/><path d="M19 22v-6"/></svg></span> Expenses
   </button>
   <button class="nav-item" onclick="switchView('insights')">
-    <span class="nav-icon">📊</span> Insights
+    <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16v5"/><path d="M16 14v7"/><path d="M20 10v11"/><path d="m22 3-8.646 8.646a.5.5 0 0 1-.708 0L9.354 8.354a.5.5 0 0 0-.707 0L2 15"/><path d="M4 18v3"/><path d="M8 14v7"/></svg></span> Insights
   </button>
   <button class="nav-item" onclick="switchView('glossary')">
-    <span class="nav-icon">📖</span> Glossary
+    <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="M9.1 9a3 3 0 0 1 5.82 1c0 2-3 3-3 3"/><circle cx="12" cy="17" r=".5"/></svg></span> Glossary
+  </button>
+  <button class="nav-item" onclick="switchView('profile')">
+    <span class="nav-icon"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="5"/><path d="M20 21a8 8 0 0 0-16 0"/></svg></span> Profile
   </button>
 </div>
 
@@ -463,7 +472,7 @@ function switchTab(tab) {
 
 function switchView(view) {
   currentView = view;
-  const views = ['expenses', 'insights', 'glossary'];
+  const views = ['expenses', 'insights', 'glossary', 'profile'];
   document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', views[i] === view));
   render();
 }
@@ -473,7 +482,10 @@ function render() {
   const el = document.getElementById('content');
   const expenses = getData().filter(e => e.tab === currentTab).sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  if (currentView === 'glossary') {
+  if (currentView === 'profile') {
+    renderProfile(el);
+    return;
+  } else if (currentView === 'glossary') {
     renderGlossary(el);
   } else if (currentView === 'insights') {
     renderInsights(el, expenses);
@@ -483,10 +495,38 @@ function render() {
   updateSelectionBar();
 }
 
+let insightFilter = 'all';
+
+function setInsightFilter(val) {
+  insightFilter = val;
+  render();
+}
+
 function renderInsights(el, expenses) {
   const now = new Date();
-  const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-  const recent = expenses.filter(e => new Date(e.date) >= threeMonthsAgo);
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const fullMonthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const m1 = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+  const m2 = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const m3 = new Date(now.getFullYear(), now.getMonth(), 1);
+  const threeMonthsAgo = m1;
+
+  const allRecent = expenses.filter(e => new Date(e.date) >= threeMonthsAgo);
+
+  let recent;
+  let periodLabel;
+  if (insightFilter === 'all') {
+    recent = allRecent;
+    periodLabel = `${monthNames[m1.getMonth()]} – ${monthNames[m3.getMonth()]} ${m3.getFullYear()}`;
+  } else {
+    const filterMonth = parseInt(insightFilter);
+    const filterYear = now.getFullYear() + (filterMonth > now.getMonth() ? -1 : 0);
+    recent = expenses.filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === filterMonth && d.getFullYear() === filterYear;
+    });
+    periodLabel = `${fullMonthNames[filterMonth]} ${filterYear}`;
+  }
 
   let reservedTotal = 0, openTotal = 0, expensedTotal = 0;
   recent.forEach(e => {
@@ -495,12 +535,6 @@ function renderInsights(el, expenses) {
     else openTotal += e.amount;
   });
   const total = reservedTotal + openTotal + expensedTotal;
-
-  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const m1 = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-  const m2 = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-  const m3 = new Date(now.getFullYear(), now.getMonth(), 1);
-  const periodLabel = `${monthNames[m1.getMonth()]} – ${monthNames[m3.getMonth()]} ${m3.getFullYear()}`;
 
   // ── Extra metrics ──
   const count = recent.length;
@@ -526,9 +560,21 @@ function renderInsights(el, expenses) {
   let topCat = null;
   Object.entries(byCat).forEach(([k, v]) => { if (!topCat || v > topCat.amount) topCat = { type: k, amount: v }; });
 
+  const m1Idx = m1.getMonth();
+  const m2Idx = m2.getMonth();
+  const m3Idx = m3.getMonth();
+
   el.innerHTML = `
+    <div style="margin-bottom:12px;">
+      <select onchange="setInsightFilter(this.value)" style="width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;color:var(--text);background:var(--bg);-webkit-appearance:none;appearance:none;background-image:url(&quot;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238E8E93' stroke-width='2' fill='none'/%3E%3C/svg%3E&quot;);background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;">
+        <option value="all" ${insightFilter==='all'?'selected':''}>All 3 months</option>
+        <option value="${m1Idx}" ${insightFilter==String(m1Idx)?'selected':''}>${fullMonthNames[m1Idx]}</option>
+        <option value="${m2Idx}" ${insightFilter==String(m2Idx)?'selected':''}>${fullMonthNames[m2Idx]}</option>
+        <option value="${m3Idx}" ${insightFilter==String(m3Idx)?'selected':''}>${fullMonthNames[m3Idx]}</option>
+      </select>
+    </div>
     <div class="chart-section">
-      <h3>Last 3 Months · ${periodLabel}</h3>
+      <h3>${periodLabel}</h3>
       <div class="chart-container"><canvas id="donutCanvas" width="360" height="360"></canvas>
         <div class="chart-center">
           <div class="total">${formatEUR(total)}</div>
@@ -947,29 +993,97 @@ document.getElementById('addModal').addEventListener('click', function(e) { if (
 document.getElementById('expensedModal').addEventListener('click', function(e) { if (e.target === this) closeExpensedModal(); });
 document.getElementById('editModal').addEventListener('click', function(e) { if (e.target === this) closeEditModal(); });
 
-// ── Login ──
-function checkLogin() {
-  const user = localStorage.getItem('expense_user');
-  if (user) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('appHeader').style.display = '';
-    document.getElementById('userGreeting').textContent = user;
-    render();
+// ── Profile / Login ──
+function isLoggedIn() { return !!localStorage.getItem('expense_user'); }
+function getUser() { return localStorage.getItem('expense_user') || ''; }
+
+function renderProfile(el) {
+  if (isLoggedIn()) {
+    const name = getUser();
+    const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    const data = getData();
+    const bizCount = data.filter(e => e.tab === 'business').length;
+    const persCount = data.filter(e => e.tab === 'personal').length;
+
+    el.innerHTML = `
+      <div class="profile-card">
+        <div class="profile-avatar">${initials}</div>
+        <div class="profile-name">${esc(name)}</div>
+        <div class="profile-label">Logged in</div>
+      </div>
+      <div class="chart-section" style="text-align:left;">
+        <h3 style="margin-bottom:14px;">Account</h3>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:14px;color:var(--text-light);">Business expenses</span>
+          <span style="font-size:14px;font-weight:600;">${bizCount}</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);">
+          <span style="font-size:14px;color:var(--text-light);">Personal expenses</span>
+          <span style="font-size:14px;font-weight:600;">${persCount}</span>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="logoutUser()">Log Out</button>
+    `;
   } else {
-    document.getElementById('loginScreen').style.display = 'flex';
-    document.getElementById('appHeader').style.display = 'none';
+    el.innerHTML = `
+      <div class="login-form-inline">
+        <div class="app-icon">💰</div>
+        <h3>Welcome</h3>
+        <p>Log in to track your business and personal expenses.</p>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" id="profileLoginName" placeholder="Your name" autocomplete="name">
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" id="profileLoginPw" placeholder="Create a password" autocomplete="new-password">
+          <div class="pw-hint">At least 5 characters, at least 2 numbers, letters and numbers only.</div>
+          <div class="pw-error" id="pwError"></div>
+        </div>
+        <button class="btn-submit" onclick="loginUser()">Log In</button>
+      </div>
+    `;
   }
 }
 
+function validatePassword(pw) {
+  if (pw.length < 5) return 'Password must be at least 5 characters.';
+  if (/[^a-zA-Z0-9]/.test(pw)) return 'Only letters and numbers allowed.';
+  const digitCount = (pw.match(/[0-9]/g) || []).length;
+  if (digitCount < 2) return 'Password must contain at least 2 numbers.';
+  return null;
+}
+
 function loginUser() {
-  const name = document.getElementById('loginName').value.trim();
-  if (!name) { alert('Please enter your name.'); return; }
+  const name = document.getElementById('profileLoginName').value.trim();
+  const pw = document.getElementById('profileLoginPw').value;
+  const errEl = document.getElementById('pwError');
+
+  if (!name) { errEl.textContent = 'Please enter your name.'; errEl.style.display = 'block'; return; }
+
+  const pwErr = validatePassword(pw);
+  if (pwErr) { errEl.textContent = pwErr; errEl.style.display = 'block'; return; }
+
   localStorage.setItem('expense_user', name);
-  checkLogin();
+  localStorage.setItem('expense_pw', pw);
+  switchView('expenses');
+}
+
+function logoutUser() {
+  if (confirm('Log out? Your data will remain on this device.')) {
+    localStorage.removeItem('expense_user');
+    localStorage.removeItem('expense_pw');
+    switchView('profile');
+  }
 }
 
 // ── Init ──
-checkLogin();
+if (!isLoggedIn()) {
+  currentView = 'profile';
+  const views = ['expenses', 'insights', 'glossary', 'profile'];
+  document.querySelectorAll('.nav-item').forEach((n, i) => n.classList.toggle('active', views[i] === 'profile'));
+}
+render();
 </script>
 </body>
 </html>
